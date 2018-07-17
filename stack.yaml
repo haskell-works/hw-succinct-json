@@ -7,3 +7,5 @@ extra-package-dbs: []
 
 extra-deps:
 - hw-parser-0.1.0.0
+- hw-rankselect-0.12.0.3
+- hw-simd-0.0.0.3

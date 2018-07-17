@@ -14,6 +14,7 @@ import HaskellWorks.Data.FromByteString
 import HaskellWorks.Data.Json.Cursor
 import HaskellWorks.Data.Json.Internal.Blank
 import HaskellWorks.Data.Json.Internal.MakeIndex
+import HaskellWorks.Data.RankSelect.Base.Select1
 import System.IO.MMap
 
 import qualified Data.ByteString          as BS
