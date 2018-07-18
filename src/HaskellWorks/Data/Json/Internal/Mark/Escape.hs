@@ -1,4 +1,4 @@
-module HaskellWorks.Data.Json.Internal.Escape
+module HaskellWorks.Data.Json.Internal.Mark.Escape
   ( markEscapedBits
   ) where
 
