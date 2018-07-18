@@ -15,4 +15,14 @@ case $1 in
     stack bench \
       --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-json:bmi2
     ;;
+
+  install)
+    stack install \
+      --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-json:bmi2
+    ;;
+
+  repl)
+    stack repl \
+      --flag bits-extra:bmi2 --flag hw-rankselect-base:bmi2 --flag hw-rankselect:bmi2 --flag hw-json:bmi2
+    ;;
 esac
