@@ -28,24 +28,9 @@ readJson path = do
   print ("Created cursor" :: String)
   return cursor
 
--- exploreSiblings :: BalancedParens b => b -> Count -> ([Count] -> [Count])
--- exploreSiblings b c = case nextSibling b c of
---   Just d -> (d:) . explore b d
---   Nothing -> id
---
--- exploreChildren :: BalancedParens b => b -> Count -> ([Count] -> [Count])
--- exploreChildren b c = case firstChild b c of
---   Just d -> (d:) . explore b d
---   Nothing -> id
---
--- explore :: BalancedParens b => b -> Count -> ([Count] -> [Count])
--- explore b c = exploreSiblings b c . exploreChildren b c
-
 main :: IO ()
 main = do
   !cursor <- loadJsonWithCsPoppyIndex "../data/78mb.json"
-  -- let ranks = explore (balancedParens cursor) (cursorRank cursor)
-  -- putStrLn $ "Ranks: " ++ show (length (ranks []))
 
   let !json = lightJsonAt cursor
   let q = MQuery (DL.singleton json)
