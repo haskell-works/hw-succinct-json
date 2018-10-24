@@ -6,6 +6,7 @@ module Main where
 import Control.Monad
 import Criterion.Main
 import Data.List
+import Data.Semigroup                            ((<>))
 import Data.Word
 import Foreign
 import HaskellWorks.Data.BalancedParens.Simple
@@ -15,10 +16,16 @@ import HaskellWorks.Data.Json.Internal.Blank
 import HaskellWorks.Data.Json.Internal.MakeIndex
 import System.IO.MMap
 
-import qualified Data.ByteString          as BS
-import qualified Data.ByteString.Internal as BSI
-import qualified Data.Vector.Storable     as DVS
-import qualified System.Directory         as IO
+import qualified Data.ByteString                               as BS
+import qualified Data.ByteString.Internal                      as BSI
+import qualified Data.ByteString.Lazy                          as LBS
+import qualified Data.Vector.Storable                          as DVS
+import qualified HaskellWorks.Data.Json.Internal.New.PreParseA as PPA
+import qualified HaskellWorks.Data.Json.Internal.New.PreParseB as PPB
+import qualified HaskellWorks.Data.Json.Internal.New.RawIbsA   as RIBA
+import qualified HaskellWorks.Data.Json.Internal.New.RawIbsB   as RIBB
+import qualified HaskellWorks.Data.Json.Internal.New.Stream    as S
+import qualified System.Directory                              as IO
 
 setupEnvJson :: FilePath -> IO BS.ByteString
 setupEnvJson filepath = do
@@ -50,7 +57,7 @@ makeBenchJsonToInterestBits = do
   let files = ("corpus/bench/" ++) <$> (".json" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (setupEnvJson file) $ \bs -> bgroup file
-      [ bench "Run blankJson" (whnf (BS.concat . jsonToInterestBits3) [bs])
+      [ bench "Run jsonToInterestBits" (whnf (BS.concat . jsonToInterestBits3) [bs])
       ]
     ]
 
@@ -62,7 +69,56 @@ makeBenchLoadJson = do
   let files = ("corpus/bench/" ++) <$> (".json" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (setupEnvJson file) $ \bs -> bgroup file
-      [ bench "Run blankJson" (whnf loadJson bs)
+      [ bench "Run loadJson" (whnf loadJson bs)
+      ]
+    ]
+
+  return (join benchmarks)
+
+makeBenchBuildSemiIndexPpbA :: IO [Benchmark]
+makeBenchBuildSemiIndexPpbA = do
+  entries <- IO.listDirectory "corpus/bench"
+  let files = ("corpus/bench/" ++) <$> (".json" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return
+    [ env (setupEnvJson file) $ \bs -> bgroup file
+    -- buildSemiIndex :: BS.ByteString -> Vec2 (DVS.Vector Word64)
+      [ bench "Build semi index (preparse) A" (whnf PPA.buildSemiIndex bs)
+      ]
+    ]
+
+  return (join benchmarks)
+
+makeBenchBuildSemiIndexPpbB :: IO [Benchmark]
+makeBenchBuildSemiIndexPpbB = do
+  entries <- IO.listDirectory "corpus/bench"
+  let files = ("corpus/bench/" ++) <$> (".json" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return
+    [ env (setupEnvJson file) $ \bs -> bgroup file
+      [ bench "Build semi index (preparse) B" (whnf (PPB.buildSemiIndex (BS.length bs)) (S.streamByteString bs))
+      ]
+    ]
+
+  return (join benchmarks)
+
+makeBenchBuildSemiIndexRibA :: IO [Benchmark]
+makeBenchBuildSemiIndexRibA = do
+  entries <- IO.listDirectory "corpus/bench"
+  let files = ("corpus/bench/" ++) <$> (".json" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return
+    [ env (setupEnvJson file) $ \bs -> bgroup file
+      [ bench "Build semi index (Raw IBS) A" (whnf (fst . RIBA.extractRawInterestBits) (LBS.fromStrict bs))
+      ]
+    ]
+
+  return (join benchmarks)
+
+makeBenchBuildSemiIndexRibB :: IO [Benchmark]
+makeBenchBuildSemiIndexRibB = do
+  entries <- IO.listDirectory "corpus/bench"
+  let files = ("corpus/bench/" ++) <$> (".json" `isSuffixOf`) `filter` entries
+  benchmarks <- forM files $ \file -> return
+    [ env (setupEnvJson file) $ \bs -> bgroup file
+      [ bench "Build semi index (Raw IBS) B" (whnf (fst . RIBB.extractRawInterestBits) (LBS.fromStrict bs))
       ]
     ]
 
@@ -70,9 +126,12 @@ makeBenchLoadJson = do
 
 main :: IO ()
 main = do
-  benchmarks <- mconcat <$> sequence
-    [ makeBenchBlankJson
-    , makeBenchJsonToInterestBits
-    , makeBenchLoadJson
-    ]
+  benchmarks <- fmap mconcat . sequence $ mempty
+    -- <> pure makeBenchBlankJson
+    -- <> pure makeBenchJsonToInterestBits
+    -- <> pure makeBenchLoadJson
+    <> pure makeBenchBuildSemiIndexPpbA
+    <> pure makeBenchBuildSemiIndexPpbB
+    <> pure makeBenchBuildSemiIndexRibA
+    <> pure makeBenchBuildSemiIndexRibB
   defaultMain benchmarks
