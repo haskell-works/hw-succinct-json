@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+file="$1"
+ib_file="$2"
+bp_file="$3"
+
+hw-dump selected-by-bits \
+    --file "$file" \
+    --bit-file "$ib_file" \
+  > "${ib_file}.txt"
+
+hw-dump slice \
+    --file "$bp_file" \
+    --word-size 2 \
+    --word-bit 0 \
+  > "${bp_file}.0.idx"
+
+hw-dump slice \
+    --file "$bp_file" \
+    --word-size 2 \
+    --word-bit 1 \
+  > "${bp_file}.1.idx"
+
+hw-dump bits \
+    --file "${ib_file}.txt" \
+    --bit-file "${bp_file}.0.idx" \
+    --bit-file "${bp_file}.1.idx"

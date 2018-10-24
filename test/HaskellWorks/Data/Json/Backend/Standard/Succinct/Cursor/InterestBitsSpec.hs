@@ -1,7 +1,6 @@
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-
 module HaskellWorks.Data.Json.Backend.Standard.Succinct.Cursor.InterestBitsSpec(spec) where
 
 import Data.String

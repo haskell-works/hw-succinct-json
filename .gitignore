@@ -29,3 +29,8 @@ cabal.sandbox.config
 /stack-ci.yaml
 /cbits
 *.idx
+a.out
+/*.txt
+*.s
+*.o
+*.dump
