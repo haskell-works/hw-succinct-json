@@ -1,10 +1,8 @@
-{-# LANGUAGE BangPatterns        #-}
 {-# LANGUAGE FlexibleInstances   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module HaskellWorks.Data.Json.Backend.Standard.LoadCursor
-  ( readJson
-  , loadJsonWithCsPoppyIndex
+  ( loadJsonWithCsPoppyIndex
   , loadJsonWithIndex
   , loadJsonWithPoppy512Index
   , loadJsonWithPoppy512Index2
@@ -22,22 +20,6 @@ import qualified Data.ByteString                              as BS
 import qualified Data.ByteString.Internal                     as BSI
 import qualified Data.Vector.Storable                         as DVS
 import qualified HaskellWorks.Data.Json.Backend.Standard.Slow as SLOW
-
-readJson :: String -> IO (JsonCursor BS.ByteString (DVS.Vector Word64) (SimpleBalancedParens (DVS.Vector Word64)))
-readJson path = do
-  bs <- readFile path
-  let !cursor = SLOW.makeCursor bs
-  return cursor
-
-loadJsonRawWithIndex :: String -> IO (BS.ByteString, DVS.Vector Word64, DVS.Vector Word64)
-loadJsonRawWithIndex filename = do
-  jsonFr    <- mmapFileForeignPtr filename ReadOnly Nothing
-  jsonIbFr  <- mmapFileForeignPtr (filename ++ ".ib") ReadOnly Nothing
-  jsonBpFr  <- mmapFileForeignPtr (filename ++ ".bp") ReadOnly Nothing
-  let jsonBS  = fromForeignRegion jsonFr    :: BS.ByteString
-  let jsonIb  = fromForeignRegion jsonIbFr  :: DVS.Vector Word64
-  let jsonBp  = fromForeignRegion jsonBpFr  :: DVS.Vector Word64
-  return (jsonBS, jsonIb, jsonBp)
 
 loadJsonWithIndex :: String -> IO (JsonCursor BSI.ByteString (DVS.Vector Word64) (SimpleBalancedParens (DVS.Vector Word64)))
 loadJsonWithIndex filename = do
