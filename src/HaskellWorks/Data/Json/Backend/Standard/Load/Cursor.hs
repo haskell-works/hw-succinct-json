@@ -18,7 +18,3 @@ loadCursor path = do
   bs <- BS.mmap path
   let !cursor = SLOW.makeCursor bs
   return cursor
-<<<<<<< HEAD
-=======
-    
->>>>>>> New Load.Cursor module
