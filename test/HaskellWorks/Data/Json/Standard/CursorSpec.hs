@@ -17,9 +17,9 @@ import Test.Hspec
 import qualified HaskellWorks.Data.Json.Standard.Cursor.Fast as FAST
 import qualified HaskellWorks.Data.Json.Standard.Cursor.Slow as SLOW
 
-{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
-{-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
-{-# ANN module ("HLint: ignore Redundant bracket"   :: String) #-}
+{- HLINT ignore "Redundant do"        -}
+{- HLINT ignore "Redundant bracket"   -}
+{- HLINT ignore "Reduce duplication"  -}
 
 spec :: Spec
 spec = describe "HaskellWorks.Data.Json.Succinct.CursorSpec" $ do
