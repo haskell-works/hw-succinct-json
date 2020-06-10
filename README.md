@@ -22,7 +22,7 @@ If you need a repl to run any of the Haskell examples in this README, please run
 cabal v2-repl lib:examples
 ```
 
-For rexamples these examples are also found in Haskell modules under the `examples` directory.
+These examples are also found in Haskell modules under the `examples` directory for compilation under CI.
 
 ### Parsing large Json files in Scala with Argonaut
 
